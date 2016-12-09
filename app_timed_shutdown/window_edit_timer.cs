@@ -33,6 +33,7 @@ namespace app_timed_shutdown
             datetime_time.MinDate = DateTime.Now;
             datetime_date.Value = this.time;
             datetime_time.Value = this.time;
+            this.BringToFront();
         }
 
         private void button_set_Click(object sender, EventArgs e)

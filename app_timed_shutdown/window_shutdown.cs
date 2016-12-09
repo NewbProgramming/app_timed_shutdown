@@ -22,7 +22,7 @@ namespace app_timed_shutdown
 
         private void window_shutdown_Load(object sender, EventArgs e)
         {
-
+            this.BringToFront();
         }
 
         private void countdown_Tick(object sender, EventArgs e)
