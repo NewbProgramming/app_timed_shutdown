@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using Microsoft.Win32;
 
 namespace app_timed_shutdown
 {
@@ -17,6 +20,45 @@ namespace app_timed_shutdown
         public timed_shutdown()
         {
             InitializeComponent();
+        }
+
+        private bool AddAsStartUp()
+        {
+            int p = (int)Environment.OSVersion.Platform;
+
+            if ((p == 4) || (p == 6) || (p == 128))
+            {
+                return false; // It's Linux.
+            }
+
+            // Requires "using Microsoft.Win32", and "using System.IO".
+            RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+
+            if(registryKey.GetValue("app_timed_shutdown") != null)
+            {
+                return false; // Already a start-up.
+            }
+
+            string current_working_directory = Directory.GetCurrentDirectory();
+            string executable = string.Format(
+                "{0}{1}{2}", 
+                current_working_directory, 
+                Path.DirectorySeparatorChar, 
+                AppDomain.CurrentDomain.FriendlyName
+            );
+            
+            if(File.Exists(executable) == false)
+            {
+                return false; // Could not find the executable.
+            }
+
+            registryKey.SetValue("app_timed_shutdown", executable);
+
+            /*
+             *  // Delete from the registry.
+             *   registryKey.DeleteValue("SAMP_GameMode");
+             */
+            return true;
         }
 
         private void UpdateMenu()
@@ -46,6 +88,11 @@ namespace app_timed_shutdown
         {
             this.Hide();
 
+            if(AddAsStartUp() == true)
+            {
+                MessageBox.Show("Added Timed Shutdown as a Windows Start Up application.\nYou can disable it from Task Manager.");
+            }
+
             UpdateMenu();
         }
 
@@ -56,6 +103,10 @@ namespace app_timed_shutdown
                 e.Cancel = true;
 
                 this.Hide();
+            }
+            else
+            {
+                check_timers.Enabled = false;
             }
         }
 

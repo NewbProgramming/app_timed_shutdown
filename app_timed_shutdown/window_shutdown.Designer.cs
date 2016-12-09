@@ -76,6 +76,7 @@
             this.Name = "window_shutdown";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Timed Shutdown";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.window_shutdown_FormClosing);
             this.Load += new System.EventHandler(this.window_shutdown_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

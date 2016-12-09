@@ -52,5 +52,10 @@ namespace app_timed_shutdown
         {
             this.Close();
         }
+
+        private void window_shutdown_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            countdown.Enabled = false;
+        }
     }
 }
